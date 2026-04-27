@@ -1,5 +1,5 @@
 import hashlib
-from fastapi import APIRouter, Depends, UploadFile, File
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from app.schemas.requests import AnalyzeTextRequest, AnalyzeURLRequest, WordHeatmapRequest
 from app.schemas.responses import AnalysisResponse, WordHeatmapResponse
 from app.schemas.enums import InputType
@@ -7,8 +7,14 @@ from app.api.dependencies import get_analysis_service, get_input_handler_service
 from app.services.analysis import AnalysisService
 from app.services.input_handlers import InputHandlerService
 from app.services.cache import CacheService
+from app.models.manager import model_manager
 
 router = APIRouter()
+
+def verify_models_loaded():
+    loader = model_manager
+    if loader.lr.model is None or loader.lr.vectorizer is None:
+        raise HTTPException(status_code=500, detail="Models not loaded. Check ml_models/ folder path.")
 
 async def get_cached_or_analyze(
     cache: CacheService, 
@@ -37,6 +43,7 @@ async def analyze_text(
     input_handler: InputHandlerService = Depends(get_input_handler_service),
     cache: CacheService = Depends(get_cache_service)
 ):
+    verify_models_loaded()
     cleaned_text = input_handler.process_text(request.text)
     return await get_cached_or_analyze(cache, analysis_service, cleaned_text, InputType.TEXT)
 
@@ -47,6 +54,7 @@ async def analyze_url(
     input_handler: InputHandlerService = Depends(get_input_handler_service),
     cache: CacheService = Depends(get_cache_service)
 ):
+    verify_models_loaded()
     # Only use strings for URL
     text = input_handler.process_url(str(request.url))
     return await get_cached_or_analyze(cache, analysis_service, text, InputType.URL)
@@ -58,6 +66,7 @@ async def analyze_pdf(
     input_handler: InputHandlerService = Depends(get_input_handler_service),
     cache: CacheService = Depends(get_cache_service)
 ):
+    verify_models_loaded()
     text = await input_handler.process_pdf(file)
     return await get_cached_or_analyze(cache, analysis_service, text, InputType.PDF)
 
@@ -68,6 +77,7 @@ async def analyze_image(
     input_handler: InputHandlerService = Depends(get_input_handler_service),
     cache: CacheService = Depends(get_cache_service)
 ):
+    verify_models_loaded()
     text = await input_handler.process_image(file)
     return await get_cached_or_analyze(cache, analysis_service, text, InputType.IMAGE)
 

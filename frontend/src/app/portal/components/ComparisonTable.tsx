@@ -4,7 +4,7 @@ import React, { useRef, useEffect } from 'react';
 const rows = [
   {
     painPoint: 'Detecting fake news from headlines alone',
-    portal: 'BERT contextual embeddings — 96.9% accuracy on headlines',
+    portal: 'BERT contextual embeddings — 98.0% accuracy on headlines',
     bloomerang: 'Keyword matching only',
     salesforce: 'No NLP, rule-based filters',
     excel: 'Manual fact-check',
@@ -24,7 +24,7 @@ const rows = [
     bloomerang: 'Slow batch processing',
     salesforce: 'API latency > 2s',
     excel: 'Minutes per article',
-    portalDetail: 'Logistic Regression and SVM models provide instant fallback for speed.',
+    portalDetail: 'Groq LLM, CNN+LSTM, Logistic Regression, and SVM provide fast ensemble support for speed and robustness.',
   },
   {
     painPoint: 'Explainability — why was it flagged as fake?',
@@ -44,11 +44,11 @@ const rows = [
   },
   {
     painPoint: 'Multi-model ensemble for higher accuracy',
-    portal: 'BERT + Logistic Regression + SVM ensemble voting',
+    portal: 'BERT + Groq LLM + CNN+LSTM + Log.Reg + SVM ensemble voting',
     bloomerang: 'Single model only',
     salesforce: 'Single classifier',
     excel: 'One person\'s opinion',
-    portalDetail: 'Three models vote on each article. Disagreement flags borderline cases for review.',
+    portalDetail: 'Five specialized models vote on each article. Disagreement flags borderline cases for review.',
   },
   {
     painPoint: 'Training data transparency and reproducibility',
@@ -179,7 +179,7 @@ export default function ComparisonTable() {
                         className="font-mono text-[9px] px-2 py-0.5 rounded-full"
                         style={{ background: 'rgba(239,68,68,0.2)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)' }}
                       >
-                        BERT · 96.9%
+                        BERT + Groq LLM · 98.0%
                       </span>
                     </div>
                   </th>
@@ -279,7 +279,7 @@ export default function ComparisonTable() {
           </div>
           <div className="flex items-center gap-3">
             <span className="font-mono text-[10px]" style={{ color: '#9090B8' }}>FakeGuard AI:</span>
-            <span className="font-mono text-lg font-bold" style={{ color: '#EF4444' }}>96.9% accuracy.</span>
+            <span className="font-mono text-lg font-bold" style={{ color: '#EF4444' }}>98.0% accuracy.</span>
             <span className="font-mono text-[10px]" style={{ color: 'rgba(74,222,128,0.7)' }}>Sub-second.</span>
           </div>
         </div>

@@ -14,14 +14,19 @@ class FeedService:
         self.api_key = settings.NEWS_API_KEY
         self.model_manager = model_manager
 
-    async def classify_feed(self) -> FeedResponse:
+    async def classify_feed(self, category: str = "general") -> FeedResponse:
         if not self.api_key:
             raise HTTPException(status_code=503, detail="NewsAPI key not configured")
             
-        logger.info("fetching_news_feed")
+        logger.info("fetching_news_feed", category=category)
         
         try:
-            url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey={self.api_key}"
+            if category == "politics":
+                # Special case: NewsAPI doesn't have a 'politics' category in top-headlines, 
+                # so we use /everything with a query.
+                url = f"https://newsapi.org/v2/everything?q=politics&language=en&sortBy=publishedAt&pageSize=20&apiKey={self.api_key}"
+            else:
+                url = f"https://newsapi.org/v2/top-headlines?country=us&category={category}&apiKey={self.api_key}"
             
             loop = asyncio.get_running_loop()
             response = await loop.run_in_executor(None, requests.get, url)

@@ -171,3 +171,6 @@ yarn-error.log*
 Thumbs.db
 nul
 CUsersazizbDownloadsPFA2appservicesanalysis.py
+
+# Large Datasets
+WELFake_Dataset.csv

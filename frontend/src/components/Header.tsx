@@ -1,5 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { ThemeToggle, useTheme } from './ThemeToggle';
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -20,7 +22,7 @@ export default function Header() {
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3">
           {/* Shield Icon */}
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -53,9 +55,9 @@ export default function Header() {
             className="font-mono text-xs font-medium tracking-[0.2em] uppercase hidden sm:block"
             style={{ color: 'rgba(239, 68, 68, 0.5)' }}
           >
-            BERT Model · 96.9%
+            BERT Model · 98.0%
           </span>
-        </div>
+        </Link>
 
         {/* Nav links */}
         <nav className="hidden md:flex items-center gap-10">
@@ -71,21 +73,36 @@ export default function Header() {
               {item}
             </a>
           ))}
-          <a
-             href="/dashboard"
-             className="font-mono text-[11px] font-bold tracking-[0.25em] uppercase transition-colors duration-200"
-             style={{ color: '#EAEAFC' }}
-             onMouseEnter={(e) => (e.currentTarget.style.color = '#4ADE80')}
-             onMouseLeave={(e) => (e.currentTarget.style.color = '#EAEAFC')}
+          
+          {/* Theme Toggle */}
+          <ThemeToggle />
+          
+          <Link
+            href="/dashboard"
+            className="font-mono text-[11px] font-bold tracking-[0.25em] uppercase transition-colors duration-200"
+            style={{ color: '#EAEAFC' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#4ADE80')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#EAEAFC')}
           >
              Dashboard App
-          </a>
+          </Link>
         </nav>
 
-        {/* CTA */}
+        {/* Mobile: Theme toggle + CTA */}
+        <div className="flex items-center gap-4 md:hidden">
+          <ThemeToggle />
+          <Link
+            href="/dashboard"
+            className="cta-btn-primary px-5 py-2.5 rounded-lg text-sm font-bold"
+          >
+            Open App →
+          </Link>
+        </div>
+
+        {/* Desktop CTA */}
         <a
           href="/dashboard"
-          className="cta-btn-primary px-5 py-2.5 rounded-lg text-sm font-bold"
+          className="cta-btn-primary px-5 py-2.5 rounded-lg text-sm font-bold hidden md:block"
         >
           Open App →
         </a>

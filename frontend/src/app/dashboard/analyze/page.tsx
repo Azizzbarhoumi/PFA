@@ -203,7 +203,7 @@ export default function AnalyzePage() {
              {/* Individual Model Results */}
              <div>
                <h3 className="font-mono text-xs text-gray-400 uppercase tracking-widest mb-4">Pipeline Model Breakdown</h3>
-               <div className="grid md:grid-cols-3 gap-4">
+               <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
                  {result.model_results.map((m, idx) => (
                    <div key={idx} className="p-5 rounded-xl border border-gray-800 bg-[#13131D] relative overflow-hidden group hover:border-blue-500/30 transition-all">
                       <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-20 pointer-events-none" style={{ background: m.label === 'FAKE' ? '#EF4444' : '#4ADE80' }} />

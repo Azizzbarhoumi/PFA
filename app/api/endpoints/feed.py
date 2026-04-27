@@ -8,30 +8,32 @@ router = APIRouter()
 
 @router.get("", response_model=FeedResponse)
 async def get_classified_feed_direct(
+    category: str = "general",
     feed_service: FeedService = Depends(get_feed_service),
     cache: CacheService = Depends(get_cache_service)
 ):
-    cache_key = "feed:classified_headlines"
+    cache_key = f"feed:classified_headlines:{category}"
     cached_data = await cache.get(cache_key)
     if cached_data:
         return FeedResponse(**cached_data)
         
-    result = await feed_service.classify_feed()
+    result = await feed_service.classify_feed(category=category)
     
     await cache.set(cache_key, result.model_dump(mode="json"), ttl=900)
     return result
 
 @router.get("/classify", response_model=FeedResponse)
 async def get_classified_feed(
+    category: str = "general",
     feed_service: FeedService = Depends(get_feed_service),
     cache: CacheService = Depends(get_cache_service)
 ):
-    cache_key = "feed:classified_headlines"
+    cache_key = f"feed:classified_headlines:{category}"
     cached_data = await cache.get(cache_key)
     if cached_data:
         return FeedResponse(**cached_data)
         
-    result = await feed_service.classify_feed()
+    result = await feed_service.classify_feed(category=category)
     
     # Cache feed for 15 minutes
     await cache.set(cache_key, result.model_dump(mode="json"), ttl=900)

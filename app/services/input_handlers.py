@@ -21,11 +21,56 @@ class InputHandlerService:
     def process_url(self, url: str) -> str:
         try:
             logger.info("scraping_url", url=url)
-            article = Article(url)
-            article.download()
-            article.parse()
-            text = f"{article.title}\n\n{article.text}"
+            import requests
+            from bs4 import BeautifulSoup
+            
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.5',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1',
+            }
+            
+            session = requests.Session()
+            session.headers.update(headers)
+            
+            response = session.get(url, timeout=30, allow_redirects=True, headers=headers)
+            response.raise_for_status()
+            
+            soup = BeautifulSoup(response.text, 'html.parser')
+            
+            title = soup.find('title')
+            if title:
+                title = title.get_text(strip=True)
+            else:
+                title = soup.find('h1')
+                title = title.get_text(strip=True) if title else "No title"
+            
+            for tag in soup(['script', 'style', 'nav', 'header', 'footer', 'aside', 'iframe', 'noscript']):
+                tag.decompose()
+            
+            article = soup.find('article') or soup.find('main') or soup.find('div', class_=lambda x: x and 'article' in str(x).lower() if x else False)
+            if article:
+                paragraphs = article.find_all('p')
+                text = ' '.join(p.get_text(strip=True) for p in paragraphs)
+            else:
+                text = soup.get_text(separator=' ', strip=True)
+            
+            text = f"{title}\n\n{text[:15000]}" if len(text) > 100 else text
+            text = title if text.strip() else "No content extracted"
+            
+            if not text.strip() or text == "No content extracted":
+                raise ValueError("No content extracted from URL")
+                
             return clean_text(text)
+        except requests.exceptions.Timeout:
+            logger.error("url_scraping_timeout", url=url)
+            raise HTTPException(status_code=408, detail=f"Request timed out. The website took too long to respond. Try a different URL.")
+        except requests.exceptions.RequestException as e:
+            logger.error("url_scraping_failed", url=url, error=str(e))
+            raise HTTPException(status_code=400, detail=f"Failed to scrape URL: {str(e)}")
         except Exception as e:
             logger.error("url_scraping_failed", url=url, error=str(e))
             raise HTTPException(status_code=400, detail=f"Failed to scrape URL: {str(e)}")

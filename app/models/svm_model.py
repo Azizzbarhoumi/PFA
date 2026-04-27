@@ -15,6 +15,9 @@ class SVMInferenceEngine:
         self.vectorizer = None
 
     def load(self):
+        print(f"[loader] Looking for SVM model at: {self.model_path}")
+        print(f"[loader] File exists: {os.path.exists(self.model_path)}")
+        
         logger.info(f"Loading SVM model from {self.model_path}...")
         try:
             if os.path.exists(self.model_path) and os.path.exists(self.vectorizer_path):
@@ -22,10 +25,13 @@ class SVMInferenceEngine:
                 self.vectorizer = joblib.load(self.vectorizer_path)
                 logger.info("SVM model loaded successfully.")
             else:
-                raise FileNotFoundError("Model or vectorizer file not found.")
+                logger.error(f"SVM Model files not found: {self.model_path}, {self.vectorizer_path}")
+                self.model = None
+                self.vectorizer = None
         except Exception as e:
-            logger.warning("Failed to load SVM model, falling back to mock", error=str(e))
+            logger.error("Failed to load SVM model", error=str(e))
             self.model = None
+            self.vectorizer = None
 
     def predict(self, text: str) -> ModelResult:
         with time_execution() as timing:

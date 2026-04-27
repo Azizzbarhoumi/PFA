@@ -4,6 +4,7 @@ pydantic
 pydantic-settings
 transformers
 torch
+tensorflow
 scikit-learn
 joblib
 PyMuPDF

@@ -6,12 +6,24 @@ export default function FeedPage() {
   const [data, setData] = useState<FeedResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('general');
 
-  const loadFeed = async () => {
+  const categories = [
+    { id: 'general', label: 'All News', icon: '🌍' },
+    { id: 'politics', label: 'Politics', icon: '🏛️' }, // NewsAPI doesn't have politics, but 'general' covers it, or we can use keyword search later. For now, let's stick to NewsAPI official categories.
+    { id: 'business', label: 'Business', icon: '💼' },
+    { id: 'technology', label: 'Tech', icon: '🚀' },
+    { id: 'sports', label: 'Sports', icon: '⚽' },
+    { id: 'entertainment', label: 'Showbiz', icon: '🎭' },
+    { id: 'science', label: 'Science', icon: '🧪' },
+    { id: 'health', label: 'Health', icon: '🏥' },
+  ];
+
+  const loadFeed = async (cat: string = selectedCategory) => {
     setLoading(true);
     setError('');
     try {
-      const res = await apiService.getFeed();
+      const res = await apiService.getFeed(cat);
       setData(res);
     } catch (err: any) {
       setError(err.message || 'Failed to load feed');
@@ -20,28 +32,58 @@ export default function FeedPage() {
     }
   };
 
+  const handleCategoryChange = (catId: string) => {
+    setSelectedCategory(catId);
+    loadFeed(catId);
+  };
+
   useEffect(() => {
     loadFeed();
   }, []);
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <header className="flex items-center justify-between border-b pb-6" style={{ borderColor: 'rgba(59,130,246,0.1)' }}>
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b pb-8" style={{ borderColor: 'rgba(59,130,246,0.1)' }}>
         <div>
-           <h1 className="text-3xl font-black uppercase tracking-tighter" style={{ color: '#EAEAFC' }}>
+           <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tighter" style={{ color: '#EAEAFC' }}>
              Global <span style={{ color: '#F6A623' }} className="italic">News Feed</span>
            </h1>
-           <p className="font-mono text-xs mt-2" style={{ color: '#9090B8' }}>
-             Real-time articles aggregated and analyzed automatically by FakeGuard AI.
+           <p className="font-mono text-[10px] mt-2 uppercase tracking-widest" style={{ color: '#9090B8' }}>
+             Real-time AI analysis of the world's top headlines
            </p>
         </div>
-        <button
-           onClick={loadFeed}
-           disabled={loading}
-           className="px-4 py-2 rounded-lg font-mono text-xs uppercase tracking-widest bg-blue-500/10 text-blue-400 border border-blue-500/30 hover:bg-blue-500/20 transition-all flex items-center gap-2"
-        >
-          {loading ? 'Syncing...' : 'Refresh Feed'}
-        </button>
+        
+        <div className="flex flex-wrap items-center gap-2">
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => handleCategoryChange(cat.id)}
+              disabled={loading}
+              className={`px-3 py-1.5 rounded-lg font-mono text-[10px] uppercase tracking-wider transition-all flex items-center gap-2 border ${
+                selectedCategory === cat.id 
+                ? 'bg-blue-500/20 text-blue-400 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)]' 
+                : 'bg-white/5 text-gray-500 border-white/5 hover:bg-white/10 hover:text-gray-300'
+              }`}
+            >
+              <span>{cat.icon}</span>
+              {cat.label}
+            </button>
+          ))}
+          <div className="w-px h-6 bg-white/10 mx-2 hidden md:block" />
+          <button
+             onClick={() => loadFeed()}
+             disabled={loading}
+             className="p-2 rounded-lg bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10 transition-all"
+             title="Refresh Feed"
+          >
+            <svg 
+              className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} 
+              fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+        </div>
       </header>
 
       {error ? (

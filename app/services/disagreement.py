@@ -23,19 +23,14 @@ class DisagreementService:
                 details={"agreed_label": labels[0]}
             )
             
-        # We have a mixture. In a 3-model setup, it's essentially always partial 
-        # unless we define 'full' as specifically meaning complete contradiction across many models.
-        # For BERT, LR, SVM, any disagreement is partial/split decision.
-        
         bert_pred = next((r.label for r in results if r.model_name == "BERT"), None)
-        lr_pred = next((r.label for r in results if r.model_name == "Logistic Regression"), None)
         
         fake_count = labels.count(Verdict.FAKE)
         real_count = labels.count(Verdict.REAL)
         
         explanation = f"Models disagree. {fake_count} predicted FAKE, {real_count} predicted REAL."
-        if lr_pred:
-            explanation += f" Logistic Regression (primary authority) predicted {lr_pred}."
+        if bert_pred:
+            explanation += f" BERT (primary authority) predicted {bert_pred.value}."
             
         return DisagreementInfo(
             level=DisagreementLevel.PARTIAL_DISAGREEMENT,
@@ -43,7 +38,6 @@ class DisagreementService:
             details={
                 "fake_count": fake_count,
                 "real_count": real_count,
-                "lr_override": lr_pred.value,
                 "bert_prediction": bert_pred.value if bert_pred else None
             }
         )

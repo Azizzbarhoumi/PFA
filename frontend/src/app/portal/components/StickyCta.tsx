@@ -28,7 +28,7 @@ export default function StickyCta() {
         <div className="hidden md:flex items-center gap-4">
           <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#4ADE80' }} />
           <p className="font-mono text-[11px] tracking-[0.15em]" style={{ color: '#9090B8' }}>
-            FakeGuard AI · BERT + Classical ML · 96.9% accuracy on 72,134 articles
+            FakeGuard AI · BERT + CNN+LSTM + Classical ML · 98.0% accuracy on 72,134 articles
           </p>
         </div>
 

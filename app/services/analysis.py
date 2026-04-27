@@ -12,7 +12,7 @@ from app.core.logging import get_logger
 
 logger = get_logger(__name__)
 # Executor for running blocking ML models in async context
-thread_pool = ThreadPoolExecutor(max_workers=3)
+thread_pool = ThreadPoolExecutor(max_workers=5)
 
 class AnalysisService:
     def __init__(self, model_manager: ModelManager):
@@ -35,10 +35,12 @@ class AnalysisService:
         
         # Dispatch model inference to thread pool so we don't block the event loop
         bert_task = loop.run_in_executor(thread_pool, self.model_manager.get_bert().predict, inference_text)
+        cnn_task = loop.run_in_executor(thread_pool, self.model_manager.get_cnn().predict, inference_text)
         lr_task = loop.run_in_executor(thread_pool, self.model_manager.get_lr().predict, inference_text)
         svm_task = loop.run_in_executor(thread_pool, self.model_manager.get_svm().predict, inference_text)
+        groq_task = loop.run_in_executor(thread_pool, self.model_manager.get_groq().predict, inference_text)
 
-        results: List[ModelResult] = await asyncio.gather(bert_task, lr_task, svm_task)
+        results: List[ModelResult] = await asyncio.gather(bert_task, cnn_task, lr_task, svm_task, groq_task)
         
         # 3. Disagreement Intelligence
         disagreement = self.disagreement_service.evaluate(results)

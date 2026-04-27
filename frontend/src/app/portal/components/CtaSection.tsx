@@ -67,7 +67,7 @@ export default function CtaSection() {
           className="text-lg font-light leading-relaxed mb-12 max-w-2xl mx-auto"
           style={{ color: '#9090B8' }}
         >
-          FakeGuard AI uses BERT deep learning and classical ML models trained on 72,000+ articles to detect fake news with 96.9% accuracy — in seconds.
+          FakeGuard AI uses BERT, CNN+LSTM, and classical ML models trained on 72,000+ articles to detect fake news with 98.0% accuracy — in seconds.
         </p>
 
         {/* CTA group */}
@@ -114,7 +114,7 @@ export default function CtaSection() {
               </button>
             </form>
             <p className="font-mono text-[10px] tracking-[0.2em]" style={{ color: 'rgba(144,144,184,0.4)' }}>
-              Free tier available · No credit card · BERT + 2 classical ML models
+              Free tier available · No credit card · BERT + CNN+LSTM + 2 classical ML models
             </p>
           </div>
         ) : (
@@ -139,8 +139,8 @@ export default function CtaSection() {
         >
           {[
             { value: '72,134', label: 'Training articles' },
-            { value: '96.9%', label: 'Best accuracy' },
-            { value: '3 Models', label: 'BERT · LR · SVM' },
+            { value: '98.0%', label: 'Best accuracy' },
+            { value: '4 Models', label: 'BERT · CNN+LSTM · LR · SVM' },
             { value: '<1s', label: 'Inference time' },
           ].map((stat) => (
             <div key={stat.label} className="text-center">

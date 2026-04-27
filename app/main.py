@@ -61,12 +61,13 @@ app.add_middleware(
 app.include_router(api_router, prefix="/api/v1")
 
 @app.get("/health", tags=["Health"])
+@app.get("/api/health", tags=["Health"])
 async def health_check():
+    loader = model_manager
     return {
-        "status": "up",
-        "models_loaded": {
-            "bert": model_manager.get_bert().model is not None,
-            "lr": model_manager.get_lr().model is not None,
-            "svm": model_manager.get_svm().model is not None
-        }
+        "bert": "loaded" if loader.get_bert().model is not None else "not found",
+        "cnn": "loaded" if loader.get_cnn().model is not None else "not found",
+        "lr": "loaded" if loader.get_lr().model is not None else "not found",
+        "svm": "loaded" if loader.get_svm().model is not None else "not found",
+        "tfidf": "loaded" if (loader.get_lr().vectorizer is not None or loader.get_svm().vectorizer is not None) else "not found"
     }

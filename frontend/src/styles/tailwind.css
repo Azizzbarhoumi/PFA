@@ -16,9 +16,44 @@
   --amber: #F6A623;
   --green: #4ADE80;
   --red: #EF4444;
+  --bg-secondary: rgba(30,30,46,0.5);
+  --bg-card: rgba(30,30,46,0.5);
 }
 
-* {
+[data-theme="light"] {
+  --void: #FFFFFF;
+  --void-mid: #FFFFFF;
+  --interface-gray: #F8FAFC;
+  --violet: #EF4444;
+  --lilac: #3B82F6;
+  --chalk: #0F172A;
+  --chalk-muted: #334155;
+  --bg-secondary: rgba(248,250,252,0.98);
+  --bg-card: rgba(255,255,255,1);
+  --border-color: rgba(148,163,184,0.35);
+  --green: #16A34A;
+  --amber: #F59E0B;
+}
+
+/* Automatic light/dark mode overrides */
+[data-theme="light"] {
+  background-color: var(--void);
+  color: var(--chalk);
+}
+
+[data-theme="light"] [style*="background: rgba(30,30,46"] {
+  background: var(--bg-secondary) !important;
+}
+
+[data-theme="light"] [style*="background: #09090F"] {
+  background: var(--void) !important;
+}
+
+[data-theme="light"] .from-gray-900 {
+  from: var(--void-mid);
+}
+
+*, {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -26,6 +61,87 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+/* Light mode - ONLY background is white, all colors stay same */
+body.light-mode {
+  background-color: #FFFFFF !important;
+}
+
+body.light-mode > div {
+  background-color: #FFFFFF !important;
+}
+
+/* Make the main container white in light mode */
+body.light-mode .min-h-screen {
+  background-color: #FFFFFF !important;
+}
+
+/* Keep header transparent in both modes */
+body.light-mode header {
+  background-color: transparent !important;
+}
+
+/* Hero section lighter gradient */
+body.light-mode [style*="radial-gradient"] {
+  background: radial-gradient(ellipse at 50% 0%, rgba(239,68,68,0.08) 0%, #FFFFFF 70%) !important;
+}
+
+html[data-theme="light"] body {
+  background-color: #FFFFFF;
+  color: #0F172A;
+}
+
+html[data-theme="light"] h1,
+html[data-theme="light"] h2,
+html[data-theme="light"] h3 {
+  color: #0F172A;
+}
+
+html[data-theme="light"] p,
+html[data-theme="light"] span {
+  color: #334155;
+}
+
+/* Normalize dark inline styles in light mode across all pages */
+html[data-theme="light"] [style*="backgroundColor: '#09090F'"],
+html[data-theme="light"] [style*="background: #09090F"] {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+}
+
+html[data-theme="light"] [style*="rgba(30,30,46"],
+html[data-theme="light"] [style*="rgba(30, 30, 46"] {
+  background: rgba(248, 250, 252, 0.98) !important;
+  border-color: rgba(148, 163, 184, 0.35) !important;
+}
+
+html[data-theme="light"] [style*="color: '#EAEAFC'"],
+html[data-theme="light"] [style*='color: "#EAEAFC"'] {
+  color: #0F172A !important;
+}
+
+html[data-theme="light"] [style*="color: '#9090B8'"],
+html[data-theme="light"] [style*='color: "#9090B8"'],
+html[data-theme="light"] [style*="rgba(144, 144, 184"],
+html[data-theme="light"] [style*="rgba(144,144,184"] {
+  color: #475569 !important;
+}
+
+html[data-theme="light"] [style*="border: '1px solid rgba(239,68,68,0.12)'"],
+html[data-theme="light"] [style*="border: '1px solid rgba(59,130,246,0.15)'"] {
+  border-color: rgba(148, 163, 184, 0.35) !important;
+}
+
+html[data-theme="light"] .app-window {
+  background: #FFFFFF;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+}
+
+html[data-theme="light"] .app-window-bar {
+  background: rgba(248, 250, 252, 0.95);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
 }
 
 body {

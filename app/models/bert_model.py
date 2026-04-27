@@ -17,14 +17,26 @@ class BERTInferenceEngine:
 
     def load(self):
         import os
+        print(f"[loader] Looking for BERT weights at: {self.model_path}")
+        print(f"[loader] File exists: {os.path.exists(self.model_path)}")
+        
         logger.info(f"Loading BERT model from {self.model_path} onto {self.device}...")
         try:
-            local_tokenizer_path = 'ml_models/bert-base-uncased'
+            # Use local tokenizer if available
+            local_tokenizer_path = os.path.join(os.path.dirname(self.model_path), 'bert-base-uncased')
+            print(f"[loader] Looking for local tokenizer at: {local_tokenizer_path}")
+            print(f"[loader] File exists: {os.path.exists(local_tokenizer_path)}")
+            
             if os.path.exists(local_tokenizer_path):
                 self.tokenizer = AutoTokenizer.from_pretrained(local_tokenizer_path)
             else:
                 self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
             
+            if not os.path.exists(self.model_path):
+                logger.error(f"BERT weights not found at {self.model_path}")
+                self.model = None
+                return
+
             state_dict = torch.load(self.model_path, map_location=self.device, weights_only=False)
             
             bert_model = BertModel.from_pretrained('bert-base-uncased')
@@ -57,7 +69,7 @@ class BERTInferenceEngine:
             self.model = bert_model
             logger.info("BERT model loaded successfully.")
         except Exception as e:
-            logger.warning(f"Failed to load BERT model: {e}")
+            logger.error(f"Failed to load BERT model: {e}")
             self.model = None
 
     def predict(self, text: str) -> ModelResult:
